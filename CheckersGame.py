@@ -26,7 +26,10 @@ class CheckerBoard:
     def __init__(self):
         # initiate board with "OK" for valid black squares and None for invalid white squares
         new_board = self.filler("OK", None)
+        # board data member
         self._board = new_board
+        # Sets up board with player pieces
+        self.start_setup()
 
     def get_board(self):
         return self._board
@@ -53,16 +56,32 @@ class CheckerBoard:
                 board.append(whole_row)
         return board
 
+    def start_setup(self):
+        """Sets up the board with top three rows White, bottom 3 rows Black"""
+        # set White
+        for row in range(3):
+            for column in range(8):
+                if self._board[row][column] == "OK":
+                    self._board[row][column] = "White"
+        # set Black
+        for row in range(3):
+            for column in range (8):
+                if self._board[row + 5][column] == "OK":
+                    self._board[row + 5][column] = "Black"
+
+
+
 class Checkers:
     """
     information about the  board and the players. Board initialized when this object is created.
+    position is: (row, column)
     """
     def __init__(self):
         # initialized as "Black" for first move
         self._current_turn = "Black"
         self._players = {}
         board = CheckerBoard()
-        self.current_board = board.get_board()
+        self._current_board = board.get_board()
 
     def change_turn(self):
         """Function to change the color piece going next"""
@@ -76,6 +95,30 @@ class Checkers:
         if self._players[self._current_turn] == player_name:
             return True
         return False
+
+    def get_square_details(self, position):
+        """Details on whether the square is None, White, Black, or OK"""
+        return self._current_board[position[0]][position[1]]
+
+    def get_color(self, name):
+        """Get method for the color of the player provided as input"""
+        for key, value in self._players.items():
+            if value == name:
+                return key
+
+    def valid_square_location(self, position):
+        """Returns true square coordinates are valid, false if None, or raises InvalidSquare
+        if not valid"""
+        try:
+            # Space is a white square
+            if self._current_board[position[0]][position[1]] is None:
+                return False
+            # Space is a black square
+            elif self._current_board[position[0]][position[1]]:
+                return True
+            # outside of the board
+        except IndexError:
+            raise InvalidSquare("This position does not exist")
 
     def create_player(self, player_name, piece_color):
         if piece_color.lower() == "black":
@@ -91,14 +134,25 @@ class Checkers:
         if not self.valid_turn(player_name):
             raise OutofTurn("It's not currently your turn!")
         else:
-            pass # continue from here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            # raises InvalidSquare if outside the board
+            check_start = self.valid_square_location(starting_square_location)
+            check_dest = self.valid_square_location(destination_square_location)
+            # raises InvalidSquare if a white "None" square
+            if not check_start or not check_dest:
+                raise InvalidSquare("Not a valid choice!")
+            current_player = self.get_color(player_name)
+            square_owner = self.get_square_details(starting_square_location)
+            # raises InvalidSquare if current player is not the owner of the starting location
+            if current_player != square_owner:
+                raise InvalidSquare("This is not your piece!")
+            #### continue with If the player_name is not valid, raise an InvalidPlayer exception (you'll need to define this exception class).
 
     def get_checker_details(self):
         pass
 
     def print_board(self):
         """Prints the current game board in the form of an array"""
-        pass
+        return self._current_board
 
     def game_winner(self):
         pass
@@ -123,7 +177,11 @@ class Player:
         pass
 
 
-board = CheckerBoard()
-
-for row in board.get_board():
+#board = CheckerBoard()
+game = Checkers()
+print(game.valid_square_location((0,0)))
+game.create_player("Larry", "black")
+game.create_player("Karolcia", "white")
+game.play_game("Larry", (7,0), (0,1))
+for row in game.print_board():
     print(row)
