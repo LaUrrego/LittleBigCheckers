@@ -50,7 +50,8 @@ class Token:
                     return
                 row_above = game_board[row - 1]
                 # Search for potential adjacent enemy piece
-                if "White" in row_above:
+                if row_above[column + 1] == "White" or row_above[column - 1] == "White":
+                    # only two possible pieces adjacent to current token
                     adjacent_candidate = []
                     for index, square in enumerate(game_board[row - 1]):
                         # white piece adjacent
@@ -292,8 +293,9 @@ game = Checkers()
 print(game.valid_square_location((0,0)))
 game.create_player("Larry", "black")
 game.create_player("Karolcia", "white")
-game.test_adder("White", (4,3))
-game.play_game("Larry", (5,6), (4,1))
+#game.test_adder("White", (4,3))
+#game.test_adder("White", (4,1))
+game.play_game("Larry", (5,0), (4,1))
 for row in game.print_board():
     print(row)
 
