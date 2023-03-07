@@ -38,6 +38,9 @@ class Token:
         """Return where this token is current placed"""
         return self._current_position
 
+    def get_type(self):
+        return self._type
+
     def get_possible_moves(self, game_board):
         """Returns possible moves for this token"""
         row, column = self._current_position
@@ -50,7 +53,12 @@ class Token:
                     return
                 row_above = game_board[row - 1]
                 # Search for potential adjacent enemy piece
-                if row_above[column + 1] == "White" or row_above[column - 1] == "White":
+                # test for edge of board
+                if column == 7:
+                    condition = row_above[column - 1] == "White"
+                else:
+                    condition = row_above[column + 1] == "White" or row_above[column - 1] == "White"
+                if condition:
                     # only two possible pieces adjacent to current token
                     adjacent_candidate = []
                     for index, square in enumerate(game_board[row - 1]):
@@ -81,7 +89,48 @@ class Token:
 
             # white piece logic
             elif self._color == "White":
-                pass
+                if row == 7:
+                    print("BOTTOM EDGE, CHANGE TO KING")
+                    return
+                row_below = game_board[row + 1]
+                # Search for potential adjacent enemy piece
+                # test for edge of board
+                if column == 7:
+                    condition = row_below[column - 1] == "Black"
+                else:
+                    condition = row_below[column - 1] == "Black" or row_below[column + 1] == "Black"
+                if condition:
+                    # only two possible pieces adjacent to current token
+                    adjacent_candidate = []
+                    for index, square in enumerate(game_board[row + 1]):
+                        # black piece adjacent
+                        if square == "Black" and (index == column + 1 or index == column - 1) and row < 6:
+                            # add candidates
+                            adjacent_candidate.append((row + 1, index))
+                    print("adjacent: ", adjacent_candidate)
+                    two_below = game_board[row + 2]
+                    for candidates in adjacent_candidate:
+                        x_pos, y_pos = candidates
+                        # on the right
+                        if y_pos > column:
+                            if two_below[y_pos + 1] == "OK":
+                                possible_moves.append((row + 2, y_pos + 1))
+                        # on the left
+                        elif y_pos < column:
+                            if two_below[y_pos - 1] == "OK":
+                                possible_moves.append((row + 2, y_pos - 1))
+                    return possible_moves
+                # No black in row above piece
+                else:
+                    for index, square in enumerate(game_board[row + 1]):
+                        if square == "OK" and (index == column + 1 or index == column - 1):
+                            # add empty space not occupied by enemy or None
+                            possible_moves.append((row + 1, index))
+                return possible_moves
+        elif self._type == "King":
+            pass
+        elif self._type == "TripleKing":
+            pass
 
 
 
@@ -156,6 +205,16 @@ class Checkers:
         }
         self._current_board = None
         self.setup()
+
+    def get_white_tokens(self):
+        return self._tokens["White"]
+
+    def get_black_tokens(self):
+        return self._tokens["Black"]
+
+    def test_color_change(self, color):
+        """Changes the current turn for testing purposes"""
+        self._current_turn = color
 
     def test_adder(self, color, pos):
         """tester method to add a piece in a particular place"""
@@ -251,10 +310,31 @@ class Checkers:
                     return
 
 
-            #### continue with If the player_name is not valid, raise an InvalidPlayer exception (you'll need to define this exception class).
+            #### continue with moving and returning any pieces
 
-    def get_checker_details(self):
-        pass
+
+    def get_checker_details(self, square_location):
+        """takes a position on the board and returns the type of token currently on it or None if empty"""
+        row, column = square_location
+        selected = self._current_board[row][column]
+        if selected is None or selected == "OK":
+            return None
+        for piece in self.get_white_tokens():
+            if piece.get_position() == square_location:
+                if piece.get_type() == "Regular":
+                    return "White"
+                elif piece.get_type() == "King":
+                    return "White_King"
+                elif piece.get_type() == "TripleKing":
+                    return "White_Triple_King"
+        for piece in self.get_black_tokens():
+            if piece.get_position() == square_location:
+                if piece.get_type() == "Regular":
+                    return "Black"
+                elif piece.get_type() == "King":
+                    return "Black_king"
+                elif piece.get_type() == "TripleKing":
+                    return "Black_Triple_King"
 
     def print_board(self):
         """Prints the current game board in the form of an array"""
@@ -293,9 +373,11 @@ game = Checkers()
 print(game.valid_square_location((0,0)))
 game.create_player("Larry", "black")
 game.create_player("Karolcia", "white")
-#game.test_adder("White", (4,3))
-#game.test_adder("White", (4,1))
-game.play_game("Larry", (5,0), (4,1))
+#game.test_adder("Black", (4,5))
+game.test_adder("Black", (3,4))
+game.test_color_change("White")
+game.play_game("Karolcia", (2,3), (4,1))
+
 for row in game.print_board():
     print(row)
 
