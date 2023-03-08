@@ -34,6 +34,14 @@ class Token:
         if self._type == "Regular":
             pass
 
+    def change_position(self, position):
+        """changes token's current position"""
+        self._current_position = position
+
+    def change_type(self, type):
+        """changes the token's current type"""
+        self._type = type
+
     def get_position(self):
         """Return where this token is current placed"""
         return self._current_position
@@ -48,9 +56,9 @@ class Token:
         if self._type == "Regular":
             # black piece logic
             if self._color == "Black":
-                if row == 0:
-                    print("TOP EDGE, CHANGE TO KING")
-                    return
+                #if row == 0:
+                #    print("TOP EDGE, CHANGE TO KING")
+                #    return
                 row_above = game_board[row - 1]
                 # Search for potential adjacent enemy piece
                 # test for edge of board
@@ -89,9 +97,9 @@ class Token:
 
             # white piece logic
             elif self._color == "White":
-                if row == 7:
-                    print("BOTTOM EDGE, CHANGE TO KING")
-                    return
+                #if row == 7:
+                #   print("BOTTOM EDGE, CHANGE TO KING")
+                #    return
                 row_below = game_board[row + 1]
                 # Search for potential adjacent enemy piece
                 # test for edge of board
@@ -128,10 +136,110 @@ class Token:
                             possible_moves.append((row + 1, index))
                 return possible_moves
         elif self._type == "King":
-            pass
-        elif self._type == "TripleKing":
-            pass
+            # black_king piece logic
+            if self._color == "Black":
+                # can move one forwards or backwards for non capture
+                # when possible to capture, can go on any diagonal space as long as only 1 is captured
+                # no need for enemies to be adjacent
+                #row, column = self._current_position /// remember from top
+                #possible_moves = [] /// remember from top
+                #diagonal_above_left = []
+                #for index in range(1, min(row, column) + 1):
+                #    current = game_board[row - index][column - index]
+                #    if current == "OK" or current == "White":
+                #        diagonal_above_left.append((row - index, column - index))
+                #print(diagonal_above_left)
 
+                #diagonal_above_right = []
+                #for index in range(1, min(row, 8 - column) ):
+                #    current = game_board[row - index][column + index]
+                #    if current == "OK" or current == "White":
+                #        diagonal_above_right.append((row - index, column + index))
+                #print(diagonal_above_right)
+
+                #diagonal_bottom_right = []
+                #for index in range(1, min(8 - row, 8 - column)):
+                #    current = game_board[row + index][column + index]
+                #    if current == "OK" or current == "White":
+                #        diagonal_bottom_right.append((row + index, column + index))
+                #print(diagonal_bottom_right)
+
+                #diagonal_bottom_left = []
+                #for index in range(1, min(8 - row, column)):
+                #    current = game_board[row + index][column - index]
+                #    if current == "OK" or current == "White":
+                #        diagonal_bottom_left.append((row + index, column - index))
+                #print(diagonal_bottom_left)
+
+                #possible_moves = [diagonal_above_left,
+                #                  diagonal_bottom_right,
+                #                  diagonal_above_right,
+                #                  diagonal_bottom_left]
+                #return possible_moves
+                return self.king_move_logic("White", row, column, game_board)
+
+            # white_king piece logic
+            elif self._color == "White":
+                return self.king_move_logic("Black", row, column, game_board)
+
+        elif self._type == "TripleKing":
+            return "TripleKing" # remove
+
+    def king_move_logic(self, color, row_pos, column_pos, board):
+        """Takes a color of the enemy piece, row position, column position and current game board
+        Returns a list of possible open spaces and identified enemy pieces for used in self.game_play()"""
+        diagonal_above_left = []
+        for index in range(1, min(row_pos, column_pos) + 1):
+            current = board[row_pos - index][column_pos - index]
+            if current == "OK" or current == color:
+                diagonal_above_left.append((row_pos - index, column_pos - index))
+        print(diagonal_above_left)
+
+        diagonal_above_right = []
+        for index in range(1, min(row_pos, 8 - column_pos)):
+            current = board[row_pos - index][column_pos + index]
+            if current == "OK" or current == color:
+                diagonal_above_right.append((row_pos - index, column_pos + index))
+        print(diagonal_above_right)
+
+        diagonal_bottom_right = []
+        for index in range(1, min(8 - row_pos, 8 - column_pos)):
+            current = board[row_pos + index][column_pos + index]
+            if current == "OK" or current == color:
+                diagonal_bottom_right.append((row_pos + index, column_pos + index))
+        print(diagonal_bottom_right)
+
+        diagonal_bottom_left = []
+        for index in range(1, min(8 - row_pos, column_pos)):
+            current = board[row_pos + index][column_pos - index]
+            if current == "OK" or current == color:
+                diagonal_bottom_left.append((row_pos + index, column_pos - index))
+        print(diagonal_bottom_left)
+
+        moves = [diagonal_above_left, diagonal_bottom_right, diagonal_above_right, diagonal_bottom_left]
+        return moves
+
+    def possible_jumps(self, moves_list, board):
+        """Takes a current position and possible moves list. If a jump is possible, returns True, else False"""
+        if self._type == "Regular":
+            pass
+        elif self._type == "King":
+            jumps = 0
+            for diagonal in moves_list:
+                translated_list = []
+                if len(diagonal) == 0:
+                    pass
+                for move in diagonal:
+                    row, column = move
+                    translated_list.append(board[row][column])
+                print("translated list: ", translated_list)
+                for space in range(len(translated_list)):
+                    if translated_list[space] == "OK":
+                        continue
+                    elif translated_list[space] != "OK":
+                        if space < (len(translated_list) - 1) and translated_list[space + 1] == "OK":
+                            jumps += 1
+            return jumps
 
 
 
@@ -305,10 +413,15 @@ class Checkers:
             # should match one of the current pieces in play
             for tokens in self._tokens[self._current_turn]:
                 if tokens.get_position() == starting_square_location:
+                    # test to make king once we have the selected piece
+                    tokens.change_type("King")
                     # test to see possible moves
+                    moves = tokens.get_possible_moves(self._current_board)
+                    print("Pre-Move___________________________________________________________________")
                     print(tokens.get_possible_moves(self._current_board))
-                    return
-
+                    # test to translate moves visually
+                    print("possible jumps: ",tokens.possible_jumps(moves, self._current_board))
+                    print("Post-Move__________________________________________________________________")
 
             #### continue with moving and returning any pieces
 
@@ -324,7 +437,7 @@ class Checkers:
                 if piece.get_type() == "Regular":
                     return "White"
                 elif piece.get_type() == "King":
-                    return "White_King"
+                    return "White_king"
                 elif piece.get_type() == "TripleKing":
                     return "White_Triple_King"
         for piece in self.get_black_tokens():
@@ -370,16 +483,25 @@ class Player:
 
 #board = CheckerBoard()
 game = Checkers()
-print(game.valid_square_location((0,0)))
 game.create_player("Larry", "black")
 game.create_player("Karolcia", "white")
-#game.test_adder("Black", (4,5))
-game.test_adder("Black", (3,4))
-game.test_color_change("White")
-game.play_game("Karolcia", (2,3), (4,1))
+#game.test_adder("White", (4,5))
+#game.test_adder("White", (3,6))
+#game.test_color_change("White")
+game.play_game("Larry", (5,4), (4,1))
 
 for row in game.print_board():
-    print(row)
+    new_row = []
+    for piece in row:
+        if piece == "White":
+            new_row.append("W")
+        elif piece == "Black":
+            new_row.append("B")
+        elif piece == "OK":
+            new_row.append("_")
+        elif piece is None:
+            new_row.append("X")
+    print(new_row)
 
 #for color, token in game._tokens.items():
 #    print(color)
