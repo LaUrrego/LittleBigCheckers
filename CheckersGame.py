@@ -183,36 +183,55 @@ class Token:
                 return self.king_move_logic("Black", row, column, game_board)
 
         elif self._type == "TripleKing":
-            return "TripleKing" # remove
+            # including "OK" for triple parameter to display all diagonal pieces regardless of color
+            if self._color == "Black":
+                return self.king_move_logic("White", row, column, game_board, "OK")
+            elif self._color == "White":
+                return self.king_move_logic("Black", row, column, game_board, "OK")
 
-    def king_move_logic(self, color, row_pos, column_pos, board):
+
+    def king_move_logic(self, color, row_pos, column_pos, board, triple=None):
         """Takes a color of the enemy piece, row position, column position and current game board
-        Returns a list of possible open spaces and identified enemy pieces for used in self.game_play()"""
+        Returns a list of possible open spaces and identified enemy pieces for used in self.game_play()
+        default parameter 'triple' initialized as None for King logic, but when changed to 'OK' allows for
+        use with Triple King by returning all available diagonal squares regardless of color """
         diagonal_above_left = []
         for index in range(1, min(row_pos, column_pos) + 1):
             current = board[row_pos - index][column_pos - index]
-            if current == "OK" or current == color:
+            if triple is None:
+                if current == "OK" or current == color:
+                    diagonal_above_left.append((row_pos - index, column_pos - index))
+            elif triple == "OK":
                 diagonal_above_left.append((row_pos - index, column_pos - index))
         print(diagonal_above_left)
 
         diagonal_above_right = []
         for index in range(1, min(row_pos, 8 - column_pos)):
             current = board[row_pos - index][column_pos + index]
-            if current == "OK" or current == color:
+            if triple is None:
+                if current == "OK" or current == color:
+                    diagonal_above_right.append((row_pos - index, column_pos + index))
+            elif triple == "OK":
                 diagonal_above_right.append((row_pos - index, column_pos + index))
         print(diagonal_above_right)
 
         diagonal_bottom_right = []
         for index in range(1, min(8 - row_pos, 8 - column_pos)):
             current = board[row_pos + index][column_pos + index]
-            if current == "OK" or current == color:
+            if triple is None:
+                if current == "OK" or current == color:
+                    diagonal_bottom_right.append((row_pos + index, column_pos + index))
+            elif triple == "OK":
                 diagonal_bottom_right.append((row_pos + index, column_pos + index))
         print(diagonal_bottom_right)
 
         diagonal_bottom_left = []
         for index in range(1, min(8 - row_pos, column_pos)):
             current = board[row_pos + index][column_pos - index]
-            if current == "OK" or current == color:
+            if triple is None:
+                if current == "OK" or current == color:
+                    diagonal_bottom_left.append((row_pos + index, column_pos - index))
+            elif triple == "OK":
                 diagonal_bottom_left.append((row_pos + index, column_pos - index))
         print(diagonal_bottom_left)
 
