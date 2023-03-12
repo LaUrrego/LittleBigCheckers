@@ -196,6 +196,12 @@ class Token:
         default parameter 'triple' initialized as None for King logic, but when changed to 'OK' allows for
         use with Triple King by returning all available diagonal squares regardless of color """
         diagonal_above_left = []
+        # account for corner (7,0) or (0,7)
+        if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
+            buffer = 1
+        else:
+            buffer = 0
+
         for index in range(1, min(row_pos, column_pos) + 1):
             current = board[row_pos - index][column_pos - index]
             if triple is None:
@@ -206,7 +212,7 @@ class Token:
         print(diagonal_above_left)
 
         diagonal_above_right = []
-        for index in range(1, min(row_pos, 8 - column_pos)):
+        for index in range(1, min(row_pos, 8 - column_pos) + buffer):
             current = board[row_pos - index][column_pos + index]
             if triple is None:
                 if current == "OK" or current == color:
@@ -226,7 +232,7 @@ class Token:
         print(diagonal_bottom_right)
 
         diagonal_bottom_left = []
-        for index in range(1, min(8 - row_pos, column_pos)):
+        for index in range(1, min(8 - row_pos, column_pos) + buffer):
             current = board[row_pos + index][column_pos - index]
             if triple is None:
                 if current == "OK" or current == color:
@@ -240,25 +246,43 @@ class Token:
 
     def possible_jumps(self, moves_list, board):
         """Takes a current position and possible moves list. If a jump is possible, returns True, else False"""
+        jumps = 0
         if self._type == "Regular":
             pass
-        elif self._type == "King":
-            jumps = 0
-            for diagonal in moves_list:
-                translated_list = []
-                if len(diagonal) == 0:
-                    pass
-                for move in diagonal:
-                    row, column = move
-                    translated_list.append(board[row][column])
-                print("translated list: ", translated_list)
+        #elif self._type == "King":
+        for diagonal in moves_list:
+            translated_list = []
+            if len(diagonal) == 0:
+                pass
+            for move in diagonal:
+                row, column = move
+                translated_list.append(board[row][column])
+            print("translated list: ", translated_list)
+            if self._type == "King":
+
                 for space in range(len(translated_list)):
                     if translated_list[space] == "OK":
                         continue
                     elif translated_list[space] != "OK":
                         if space < (len(translated_list) - 1) and translated_list[space + 1] == "OK":
                             jumps += 1
-            return jumps
+
+            elif self._type == "TripleKing":
+                # use a string to append moves to determine a pattern
+                layout = ""
+                for space in translated_list:
+                    layout += space
+                print("This is the test string for TK: ", layout)
+                # ability to jump over two enemy pieces
+                if "WhiteWhiteOK" in layout and "WhiteWhiteWhiteOK" not in layout:
+                    jumps += 2
+                # only one enemy piece and any empty space after is a capture
+                elif "WhiteOK" in layout:
+                    jumps += 1
+        return jumps
+
+
+
 
 
 
@@ -433,13 +457,13 @@ class Checkers:
             for tokens in self._tokens[self._current_turn]:
                 if tokens.get_position() == starting_square_location:
                     # test to make king once we have the selected piece
-                    tokens.change_type("King")
+                    tokens.change_type("TripleKing")
                     # test to see possible moves
                     moves = tokens.get_possible_moves(self._current_board)
                     print("Pre-Move___________________________________________________________________")
                     print(tokens.get_possible_moves(self._current_board))
                     # test to translate moves visually
-                    print("possible jumps: ",tokens.possible_jumps(moves, self._current_board))
+                    print("possible jumps: ", tokens.possible_jumps(moves, self._current_board))
                     print("Post-Move__________________________________________________________________")
 
             #### continue with moving and returning any pieces
@@ -482,6 +506,26 @@ class Player:
     def __init__(self, player_name, checker_color):
         self._player_name = player_name
         self._checker_color = checker_color
+        self._king_count = 0
+        self._triple_king_count = 0
+        self._capture_count = 0
+
+    def add_count(self, count_type):
+        """General method for adding count to a player's data member records.
+        Utilizes the following identify strings:
+        self._king_count - modified with 'King'
+        self._triple_king_count - modified with 'TripleKing'
+        self._capture_count - modified with 'Capture"
+        otherwise raises an AttributeError for any other string entered
+        """
+        if count_type == "King":
+            self._king_count += 1
+        elif count_type == "TripleKing":
+            self._triple_king_count += 1
+        elif count_type == "Capture":
+            self._capture_count += 1
+        else:
+            raise AttributeError("Not an accepted type!")
 
     def get_checker_color(self):
         """Returns the players checker color"""
@@ -489,15 +533,15 @@ class Player:
 
     def get_king_count(self):
         """Returns the number of kings this player has"""
-        pass
+        return self._king_count
 
     def get_triple_king_count(self):
         """Returns the number of triple kings this player has"""
-        pass
+        return self._triple_king_count
 
     def get_captured_pieces_count(self):
         """Returns the amount of captures pieces by the current player"""
-        pass
+        return self._capture_count
 
 
 #board = CheckerBoard()
@@ -505,7 +549,7 @@ game = Checkers()
 game.create_player("Larry", "black")
 game.create_player("Karolcia", "white")
 #game.test_adder("White", (4,5))
-#game.test_adder("White", (3,6))
+#game.test_adder("White", (4,1))
 #game.test_color_change("White")
 game.play_game("Larry", (5,4), (4,1))
 
