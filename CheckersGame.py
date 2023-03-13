@@ -2,22 +2,28 @@
 # GitHub username: LaUrrego
 # Date:
 # Description: Checkers simulator...
-
+import ColorFile
 
 class IncorrectColorPieceError(Exception):
-    """Used to validate player creation with piece color as string 'Black' or 'White'"""
+    """Custom exception class used to validate player creation with piece color as string 'Black' or 'White'"""
     pass
 
 
 class OutofTurn(Exception):
+    """Custom exception class used to validate player turn, raised when a player attempts to call
+    play_game out of turn"""
     pass
 
 
 class InvalidSquare(Exception):
+    """Customer exception class used to validate player move. Raised when a player uses play_game and inputs
+    a square location they don't own"""
     pass
 
 
 class InvalidPlayer(Exception):
+    """Custom exception class used to validate player. Raised when a player name is entered in play_game
+    that is not one of two recorded players in the game"""
     pass
 
 
@@ -32,26 +38,6 @@ class Token:
 
     def get_color(self):
         return self._color
-
-    def move(self, end_position, game_board, move_list):
-        captures = 0
-        if self._type == "Black":
-            foe = "White"
-        else:
-            foe = "Black"
-        if self._type == "Regular":
-            for index in range(len(move_list)):
-                if move_list[index] == end_position:
-                    if index == 0:
-                        self._current_position = end_position
-                        return captures
-                    if game_board[move_list[index - 1]] == foe:
-                        captures += 1
-                        self._current_position = end_position
-                        return captures
-        else:
-            pass
-
 
     def change_position(self, position):
         """changes token's current position"""
@@ -71,6 +57,7 @@ class Token:
     def get_possible_moves(self, game_board):
         """Returns possible moves for this token"""
         row, column = self._current_position
+
         if self._type == "Regular":
             # black piece logic
             if self._color == "Black":
@@ -79,6 +66,7 @@ class Token:
             # white piece logic
             elif self._color == "White":
                 return self.regular_move_logic("Black", row, column, game_board)
+
         elif self._type == "King":
             # black_king piece logic
             if self._color == "Black":
@@ -98,7 +86,6 @@ class Token:
             elif self._color == "White":
                 return self.king_move_logic("Black", row, column, game_board, "OK")
 
-
     def regular_move_logic(self, color, row_pos, column_pos, board):
         diagonal_above_left = []
         diagonal_buffer = [(7, 0), (6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6), (0, 7)]
@@ -113,17 +100,19 @@ class Token:
         # account for corner (7,0) or (0,7)
         #if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
             for index in range(1, min(row_pos, column_pos) + 1):
-                #current = board[row_pos - index][column_pos - index]
-                #if current == "OK" or current == color:
-                diagonal_above_left.append((row_pos - index, column_pos - index))
+                if row_pos - index not in range(8) or column_pos - index not in range(8):
+                    pass
+                else:
+                    diagonal_above_left.append((row_pos - index, column_pos - index))
 
             print("from move logic, above left: ",diagonal_above_left)
 
             diagonal_above_right = []
             for index in range(1, min(row_pos, 8 - column_pos) + buffer):
-                #current = board[row_pos - index][column_pos + index]
-                #if current == "OK" or current == color:
-                diagonal_above_right.append((row_pos - index, column_pos + index))
+                if row_pos - index not in range(8) or column_pos + index not in range(8):
+                    pass
+                else:
+                    diagonal_above_right.append((row_pos - index, column_pos + index))
 
             print("from move logic, above right:", diagonal_above_right)
             moves = [diagonal_above_left, diagonal_above_right]
@@ -139,20 +128,22 @@ class Token:
                 buffer = 1
             diagonal_bottom_right = []
             for index in range(1, min(8 - row_pos, 8 - column_pos)):
-                #current = board[row_pos + index][column_pos + index]
-                diagonal_bottom_right.append((row_pos + index, column_pos + index))
+                if row_pos + index not in range(8) or column_pos + index not in range(8):
+                    pass
+                else:
+                    diagonal_bottom_right.append((row_pos + index, column_pos + index))
             print("from move logic, bottom right: ", diagonal_bottom_right)
 
             diagonal_bottom_left = []
             for index in range(1, min(8 - row_pos, column_pos) + buffer):
-                #current = board[row_pos + index][column_pos - index]
-                diagonal_bottom_left.append((row_pos + index, column_pos - index))
+                if row_pos + index not in range(8) or column_pos - index not in range(8):
+                    pass
+                else:
+                    diagonal_bottom_left.append((row_pos + index, column_pos - index))
             print("from move logic, bottom left: ", diagonal_bottom_left)
 
             moves = [diagonal_bottom_right, diagonal_bottom_left]
             return moves
-
-
 
     def king_move_logic(self, color, row_pos, column_pos, board, triple=None):
         """Takes a color of the enemy piece, row position, column position and current game board
@@ -162,9 +153,6 @@ class Token:
         diagonal_above_left = []
         diagonal_buffer = [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6), (7, 0)]
         check = (row_pos, column_pos) in diagonal_buffer
-        # account for corner (7,0) or (0,7)
-        #if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
-        # current player is black
         if color == "White":
             if row_pos == 0 or check:
                 buffer = 1
@@ -181,42 +169,54 @@ class Token:
                 buffer = 1
 
         for index in range(1, min(row_pos, column_pos) + 1):
-            current = board[row_pos - index][column_pos - index]
-            if triple is None:
-                if current == "OK" or current == color:
+            if row_pos - index not in range(8) or column_pos - index not in range(8):
+                pass
+            else:
+                current = board[row_pos - index][column_pos - index]
+                if triple is None:
+                    if current == "OK" or current == color:
+                        diagonal_above_left.append((row_pos - index, column_pos - index))
+                elif triple == "OK":
                     diagonal_above_left.append((row_pos - index, column_pos - index))
-            elif triple == "OK":
-                diagonal_above_left.append((row_pos - index, column_pos - index))
         print("from move logic, above left: ",diagonal_above_left)
 
         diagonal_above_right = []
         for index in range(1, min(row_pos, 8 - column_pos) + buffer):
-            current = board[row_pos - index][column_pos + index]
-            if triple is None:
-                if current == "OK" or current == color:
+            if row_pos - index not in range(8) or column_pos + index not in range(8):
+                pass
+            else:
+                current = board[row_pos - index][column_pos + index]
+                if triple is None:
+                    if current == "OK" or current == color:
+                        diagonal_above_right.append((row_pos - index, column_pos + index))
+                elif triple == "OK":
                     diagonal_above_right.append((row_pos - index, column_pos + index))
-            elif triple == "OK":
-                diagonal_above_right.append((row_pos - index, column_pos + index))
         print("from move logic, above right:" ,diagonal_above_right)
 
         diagonal_bottom_right = []
         for index in range(1, min(8 - row_pos, 8 - column_pos)):
-            current = board[row_pos + index][column_pos + index]
-            if triple is None:
-                if current == "OK" or current == color:
+            if row_pos + index not in range(8) or column_pos + index not in range (8):
+                pass
+            else:
+                current = board[row_pos + index][column_pos + index]
+                if triple is None:
+                    if current == "OK" or current == color:
+                        diagonal_bottom_right.append((row_pos + index, column_pos + index))
+                elif triple == "OK":
                     diagonal_bottom_right.append((row_pos + index, column_pos + index))
-            elif triple == "OK":
-                diagonal_bottom_right.append((row_pos + index, column_pos + index))
         print("from move logic, bottom right: ", diagonal_bottom_right)
 
         diagonal_bottom_left = []
         for index in range(1, min(8 - row_pos, column_pos) + buffer):
-            current = board[row_pos + index][column_pos - index]
-            if triple is None:
-                if current == "OK" or current == color:
+            if row_pos + index not in range(8) or column_pos - index not in range(8):
+                pass
+            else:
+                current = board[row_pos + index][column_pos - index]
+                if triple is None:
+                    if current == "OK" or current == color:
+                        diagonal_bottom_left.append((row_pos + index, column_pos - index))
+                elif triple == "OK":
                     diagonal_bottom_left.append((row_pos + index, column_pos - index))
-            elif triple == "OK":
-                diagonal_bottom_left.append((row_pos + index, column_pos - index))
         print("from move logic, bottom left: ", diagonal_bottom_left)
 
         moves = [diagonal_above_left, diagonal_bottom_right, diagonal_above_right, diagonal_bottom_left]
@@ -247,7 +247,10 @@ class Token:
                             if space < (len(translated_list) - 1) and translated_list[space + 1] == "OK":
                                 jumps += 1
                         if self._type == "Regular":
-                            if space == 0 and translated_list[space] == foe and translated_list[space + 1] == "OK":
+                            # skip if only 1 move possible
+                            if len(translated_list) == 1:
+                                pass
+                            elif space == 0 and translated_list[space] == foe and translated_list[space + 1] == "OK":
                                 jumps += 1
 
             elif self._type == "TripleKing":
@@ -352,7 +355,6 @@ class Checkers:
             self._tokens["Black"].append(item)
         self._current_board = board.get_board()
 
-
     def get_turn(self):
         return self._current_turn
 
@@ -361,7 +363,6 @@ class Checkers:
             if pieces.get_position() == position:
                 moves = pieces.get_possible_moves(self._current_board)
                 print("Jumps possible: ", pieces.possible_jumps(moves, self._current_board))
-
 
     def remove_token(self, location, foe_color, my_color):
         removal_index = 0
@@ -376,7 +377,6 @@ class Checkers:
         # update player's capture count
         self._player_objects[my_color].add_count("Capture")
         print("Added to captured")
-
 
     def get_white_tokens(self):
         return self._tokens["White"]
@@ -476,15 +476,11 @@ class Checkers:
             # should match one of the current pieces in play
             for tokens in self._tokens[self._current_turn]:
                 if tokens.get_position() == starting_square_location:
-                    # test to make king once we have the selected piece
-                    #tokens.change_type("TripleKing")
-                    # test to see possible moves
 
                     #print("Pre-Move___________________________________________________________________")
                     moves = tokens.get_possible_moves(self._current_board)
 
                     # test to translate moves visually
-                    #print("possible jumps: ", tokens.possible_jumps(moves, self._current_board))
 
                     print("Post-Move__________________________________________________________________")
                     captures = 0
@@ -507,7 +503,6 @@ class Checkers:
                                         index = square
                                 # found the destination, and it's not the first of the list, indicating capture
                                 if index > 0:
-                                #if diagonal[square] == destination_square_location and square > 0:
                                     # since it needs to be adjacent and only 1 before
                                     captured_piece = diagonal[index - 1]
                                     tokens.change_position(destination_square_location)
@@ -518,7 +513,6 @@ class Checkers:
 
                                 # found destination, not a capture move
                                 elif index == 0:
-                                #elif diagonal[square] == destination_square_location and square == 0:
                                     # change current position
                                     tokens.change_position(destination_square_location)
 
@@ -530,16 +524,15 @@ class Checkers:
                                 if self._current_turn == "Black":
                                     if tokens.get_position()[0] == 0:
                                         tokens.change_type("King")
+                                        # add to player's count
+                                        self._player_objects["Black"].add_count("King")
                                 if self._current_turn == "White":
                                     if tokens.get_position()[0] == 7:
                                         tokens.change_type("King")
-
+                                        # add to player's count
+                                        self._player_objects["White"].add_count("King")
+                                # refresh board by updating from piece object locations
                                 self.setup()
-
-                                # check if jumps are possible to change the turn
-                                #print("___post moves: ", tokens.get_possible_moves(self._current_board))
-                                #print("___possible jumps: ", tokens.possible_jumps(moves, self._current_board))
-                                #print("___current color: ", self._current_turn)
 
                                 # redefine moves for new position
                                 moves = tokens.get_possible_moves(self._current_board)
@@ -553,13 +546,13 @@ class Checkers:
                                         self.change_turn()
                                 return captures
 
-
-
-
-                    # do a check to see if Regular is white and at 7 or black and at 0 (promo to king)
                     # do a check if a king is white and at 0 or black and at 7 (promo to triple king)
+                    elif tokens.get_type() == "King":
+                        pass
+                    elif tokens.get_type() == "TripleKing":
+                        pass
 
-            #### continue with moving and returning any pieces
+
     def get_checker_details(self, square_location):
         """takes a position on the board and returns the type of token currently on it or None if empty"""
         row, column = square_location
@@ -651,23 +644,49 @@ game.play_game("Karolcia", (2,1),(3,0))
 game.play_game("Larry",(5,6), (4,7))
 game.play_game("Karolcia",(3,0),(5,2))
 game.play_game("Larry",(6,1),(4,3))
+game.play_game("Larry", (4,3), (2,5))
+game.play_game("Karolcia",(1,4), (3,6))
+game.play_game("Karolcia",(3,6),(5,4))
+game.play_game("Larry",(6,3),(4,5))
+game.play_game("Karolcia",(2,3),(3,2))
+game.play_game("Larry", (7,2),(6,3))
+game.play_game("Karolcia", (1,2), (2,3))
+game.play_game("Larry", (5,0),(4,1))
+game.play_game("Karolcia", (3,2),(5,0))
+game.play_game("Larry",(4,7),(3,6))
+game.play_game("Karolcia",(5,0),(6,1))
+game.play_game("Larry", (3,6),(2,5))
+game.play_game("Karolcia", (6,1),(7,2))
 print("BOTTOM-------------------------------------------------------------")
-#game.print_moves((4,3))
+#game.print_moves((6,3))
 print("current turn after move:", game.get_turn())
 print("captured pieces Larry: ", Larry.get_captured_pieces_count())
 print("captured pieces Karolcia: ", Karolcia.get_captured_pieces_count())
+for token in game._tokens["White"]:
+    if token.get_position() == (7,2):
+        print(token.get_type())
+row_num = 0
+print("    0    1    2    3    4    5    6    7")
 for row in game._current_board:
     new_row = []
+
+    print(row_num, end=" ")
+    row_num += 1
     for piece in row:
         if piece == "White":
-            new_row.append("W")
+            #new_row.append("W")
+            print(ColorFile.bg.black, ColorFile.fg.lightgrey, "W", ' \x1b[0m', end="")
         elif piece == "Black":
-            new_row.append("B")
+            #new_row.append("B")
+            print(ColorFile.bg.black, ColorFile.fg.cyan, "B", ' \x1b[0m', end="")
         elif piece == "OK":
-            new_row.append("_")
+            #new_row.append("_")
+            print(ColorFile.bg.black, ColorFile.fg.lightgrey, " ", ' \x1b[0m', end="")
         elif piece is None:
-            new_row.append("X")
-    print(new_row)
+            #new_row.append("X")
+            print(ColorFile.bg.lightgrey, "  ", ' \x1b[0m', end="")
+    print("")
+print("    0    1    2    3    4    5    6    7")
 
 print("Larry counts: ")
 print("kings: ", Larry.get_king_count())
