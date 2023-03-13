@@ -71,142 +71,20 @@ class Token:
     def get_possible_moves(self, game_board):
         """Returns possible moves for this token"""
         row, column = self._current_position
-        possible_moves = []
         if self._type == "Regular":
             # black piece logic
             if self._color == "Black":
-                #if row == 0:
-                #    print("TOP EDGE, CHANGE TO KING")
-                #    return
-                row_above = game_board[row - 1]
-                # Search for potential adjacent enemy piece
-                # test for edge of board
-                if column == 7:
-                    condition = row_above[column - 1] == "White"
-                else:
-                    condition = row_above[column + 1] == "White" or row_above[column - 1] == "White"
-                if condition:
-                    # only two possible pieces adjacent to current token
-                    adjacent_candidate = []
-                    for index, square in enumerate(game_board[row - 1]):
-                        # white piece adjacent
-                        if square == "White" and (index == column + 1 or index == column - 1) and row > 1:
-                            # add candidates
-                            adjacent_candidate.append((row-1, index))
-                    #print("adjacent: ", adjacent_candidate)
-                    two_above = game_board[row - 2]
-                    for candidates in adjacent_candidate:
-                        x_pos, y_pos = candidates
-                        # on the right
-                        if y_pos > column:
-                            if two_above[y_pos + 1] == "OK":
-                                possible_moves.append(candidates)
-                                possible_moves.append((row-2, y_pos + 1))
-                        # on the left
-                        elif y_pos < column:
-                            if two_above[y_pos - 1] == "OK":
-                                possible_moves.append(candidates)
-                                possible_moves.append((row-2, y_pos - 1))
-                    return possible_moves
-                # No white in row above piece
-                else:
-                    for index, square in enumerate(game_board[row - 1]):
-                        if square == "OK" and (index == column + 1 or index == column - 1):
-                            # add empty space not occupied by enemy or None
-                            possible_moves.append((row - 1, index))
-                return possible_moves
+                return self.regular_move_logic("White", row, column, game_board)
 
             # white piece logic
             elif self._color == "White":
-                #if row == 7:
-                #   print("BOTTOM EDGE, CHANGE TO KING")
-                #    return
-                row_below = game_board[row + 1]
-                for index, square in enumerate(game_board[row + 1]):
-                    if square == "OK" and (index == column + 1 or index == column - 1):
-                        # add empty space not occupied by enemy or None
-                        possible_moves.append((row + 1, index))
-
-
-                # Search for potential adjacent enemy piece
-                # test for edge of board
-                if column == 7:
-                    condition = row_below[column - 1] == "Black"
-                else:
-                    condition = row_below[column - 1] == "Black" or row_below[column + 1] == "Black"
-                if condition:
-                    # only two possible pieces adjacent to current token
-                    adjacent_candidate = []
-                    for index, square in enumerate(game_board[row + 1]):
-                        # black piece adjacent
-                        if square == "Black" and index == column + 1 and row < 6:
-                            # add candidates
-                            adjacent_candidate.append((row + 1, index))
-                        if square == "Black" and index == column - 1 and row < 6:
-                            adjacent_candidate.append((row + 1, index))
-                    #print("adjacent: ", adjacent_candidate)
-                    two_below = game_board[row + 2]
-                    for candidates in adjacent_candidate:
-                        x_pos, y_pos = candidates
-                        # on the right
-                        if y_pos > column:
-                            if two_below[y_pos + 1] == "OK":
-                                possible_moves.append(candidates)
-                                possible_moves.append((row + 2, y_pos + 1))
-                        # on the left
-                        elif y_pos < column:
-                            if two_below[y_pos - 1] == "OK":
-                                possible_moves.append(candidates)
-                                possible_moves.append((row + 2, y_pos - 1))
-                    return possible_moves
-                # No black in row above piece
-                #else:
-                #    for index, square in enumerate(game_board[row + 1]):
-                #        if square == "OK" and (index == column + 1 or index == column - 1):
-                #            # add empty space not occupied by enemy or None
-                #            possible_moves.append((row + 1, index))
-                return possible_moves
+                return self.regular_move_logic("Black", row, column, game_board)
         elif self._type == "King":
             # black_king piece logic
             if self._color == "Black":
                 # can move one forwards or backwards for non capture
                 # when possible to capture, can go on any diagonal space as long as only 1 is captured
                 # no need for enemies to be adjacent
-                #row, column = self._current_position /// remember from top
-                #possible_moves = [] /// remember from top
-                #diagonal_above_left = []
-                #for index in range(1, min(row, column) + 1):
-                #    current = game_board[row - index][column - index]
-                #    if current == "OK" or current == "White":
-                #        diagonal_above_left.append((row - index, column - index))
-                #print(diagonal_above_left)
-
-                #diagonal_above_right = []
-                #for index in range(1, min(row, 8 - column) ):
-                #    current = game_board[row - index][column + index]
-                #    if current == "OK" or current == "White":
-                #        diagonal_above_right.append((row - index, column + index))
-                #print(diagonal_above_right)
-
-                #diagonal_bottom_right = []
-                #for index in range(1, min(8 - row, 8 - column)):
-                #    current = game_board[row + index][column + index]
-                #    if current == "OK" or current == "White":
-                #        diagonal_bottom_right.append((row + index, column + index))
-                #print(diagonal_bottom_right)
-
-                #diagonal_bottom_left = []
-                #for index in range(1, min(8 - row, column)):
-                #    current = game_board[row + index][column - index]
-                #    if current == "OK" or current == "White":
-                #        diagonal_bottom_left.append((row + index, column - index))
-                #print(diagonal_bottom_left)
-
-                #possible_moves = [diagonal_above_left,
-                #                  diagonal_bottom_right,
-                #                  diagonal_above_right,
-                #                  diagonal_bottom_left]
-                #return possible_moves
                 return self.king_move_logic("White", row, column, game_board)
 
             # white_king piece logic
@@ -221,17 +99,86 @@ class Token:
                 return self.king_move_logic("Black", row, column, game_board, "OK")
 
 
+    def regular_move_logic(self, color, row_pos, column_pos, board):
+        diagonal_above_left = []
+        diagonal_buffer = [(7, 0), (6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6), (0, 7)]
+        check = (row_pos, column_pos) in diagonal_buffer
+
+        # current player is black
+        if color == "White":
+            if row_pos == 0 or check:
+                buffer = 1
+            else:
+                buffer = 0
+        # account for corner (7,0) or (0,7)
+        #if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
+            for index in range(1, min(row_pos, column_pos) + 1):
+                #current = board[row_pos - index][column_pos - index]
+                #if current == "OK" or current == color:
+                diagonal_above_left.append((row_pos - index, column_pos - index))
+
+            print("from move logic, above left: ",diagonal_above_left)
+
+            diagonal_above_right = []
+            for index in range(1, min(row_pos, 8 - column_pos) + buffer):
+                #current = board[row_pos - index][column_pos + index]
+                #if current == "OK" or current == color:
+                diagonal_above_right.append((row_pos - index, column_pos + index))
+
+            print("from move logic, above right:", diagonal_above_right)
+            moves = [diagonal_above_left, diagonal_above_right]
+            return moves
+
+        # current player is white
+        if color == "Black":
+            if check:
+                buffer = 1
+            elif column_pos == 7:
+                buffer = 0
+            else:
+                buffer = 1
+            diagonal_bottom_right = []
+            for index in range(1, min(8 - row_pos, 8 - column_pos)):
+                #current = board[row_pos + index][column_pos + index]
+                diagonal_bottom_right.append((row_pos + index, column_pos + index))
+            print("from move logic, bottom right: ", diagonal_bottom_right)
+
+            diagonal_bottom_left = []
+            for index in range(1, min(8 - row_pos, column_pos) + buffer):
+                #current = board[row_pos + index][column_pos - index]
+                diagonal_bottom_left.append((row_pos + index, column_pos - index))
+            print("from move logic, bottom left: ", diagonal_bottom_left)
+
+            moves = [diagonal_bottom_right, diagonal_bottom_left]
+            return moves
+
+
+
     def king_move_logic(self, color, row_pos, column_pos, board, triple=None):
         """Takes a color of the enemy piece, row position, column position and current game board
         Returns a list of possible open spaces and identified enemy pieces for used in self.game_play()
         default parameter 'triple' initialized as None for King logic, but when changed to 'OK' allows for
         use with Triple King by returning all available diagonal squares regardless of color """
         diagonal_above_left = []
+        diagonal_buffer = [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6), (7, 0)]
+        check = (row_pos, column_pos) in diagonal_buffer
         # account for corner (7,0) or (0,7)
-        if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
-            buffer = 1
-        else:
-            buffer = 0
+        #if (row_pos == 7 and column_pos == 0) or (row_pos == 0 and column_pos == 7):
+        # current player is black
+        if color == "White":
+            if row_pos == 0 or check:
+                buffer = 1
+            else:
+                buffer = 0
+
+        # current player is white
+        elif color == "Black":
+            if check:
+                buffer = 1
+            elif column_pos == 7:
+                buffer = 0
+            else:
+                buffer = 1
 
         for index in range(1, min(row_pos, column_pos) + 1):
             current = board[row_pos - index][column_pos - index]
@@ -240,7 +187,7 @@ class Token:
                     diagonal_above_left.append((row_pos - index, column_pos - index))
             elif triple == "OK":
                 diagonal_above_left.append((row_pos - index, column_pos - index))
-        print(diagonal_above_left)
+        print("from move logic, above left: ",diagonal_above_left)
 
         diagonal_above_right = []
         for index in range(1, min(row_pos, 8 - column_pos) + buffer):
@@ -250,7 +197,7 @@ class Token:
                     diagonal_above_right.append((row_pos - index, column_pos + index))
             elif triple == "OK":
                 diagonal_above_right.append((row_pos - index, column_pos + index))
-        print(diagonal_above_right)
+        print("from move logic, above right:" ,diagonal_above_right)
 
         diagonal_bottom_right = []
         for index in range(1, min(8 - row_pos, 8 - column_pos)):
@@ -260,7 +207,7 @@ class Token:
                     diagonal_bottom_right.append((row_pos + index, column_pos + index))
             elif triple == "OK":
                 diagonal_bottom_right.append((row_pos + index, column_pos + index))
-        print(diagonal_bottom_right)
+        print("from move logic, bottom right: ", diagonal_bottom_right)
 
         diagonal_bottom_left = []
         for index in range(1, min(8 - row_pos, column_pos) + buffer):
@@ -270,7 +217,7 @@ class Token:
                     diagonal_bottom_left.append((row_pos + index, column_pos - index))
             elif triple == "OK":
                 diagonal_bottom_left.append((row_pos + index, column_pos - index))
-        print(diagonal_bottom_left)
+        print("from move logic, bottom left: ", diagonal_bottom_left)
 
         moves = [diagonal_above_left, diagonal_bottom_right, diagonal_above_right, diagonal_bottom_left]
         return moves
@@ -279,21 +226,10 @@ class Token:
         """Takes a current position and possible moves list. If a jump is possible, returns > 0 if true
         ,else 0"""
         jumps = 0
-        if self._type == "Regular":
-            translated_list = []
-            for square in moves_list:
-                row, column = square
-                translated_list.append(board[row][column])
-            print("translated list: ", translated_list)
-            if len(translated_list) == 1:
-                return jumps
-            if translated_list[0] == "OK" and translated_list[1] == "OK":
-                return jumps
-            elif translated_list[0] != self._type and translated_list[1] == "OK":
-                jumps += 1
-                return jumps
-
-        #elif self._type == "King":
+        if self._color == "Black":
+            foe = "White"
+        elif self._color == "White":
+            foe = "Black"
         for diagonal in moves_list:
             translated_list = []
             if len(diagonal) == 0:
@@ -302,14 +238,17 @@ class Token:
                 row, column = move
                 translated_list.append(board[row][column])
             print("translated list: ", translated_list)
-            if self._type == "King":
-
+            if self._type == "King" or self._type == "Regular":
                 for space in range(len(translated_list)):
                     if translated_list[space] == "OK":
                         continue
                     elif translated_list[space] != "OK":
-                        if space < (len(translated_list) - 1) and translated_list[space + 1] == "OK":
-                            jumps += 1
+                        if self._type == "King":
+                            if space < (len(translated_list) - 1) and translated_list[space + 1] == "OK":
+                                jumps += 1
+                        if self._type == "Regular":
+                            if space == 0 and translated_list[space] == foe and translated_list[space + 1] == "OK":
+                                jumps += 1
 
             elif self._type == "TripleKing":
                 # Establish enemy piece
@@ -331,13 +270,7 @@ class Token:
                         foe += 1
                     else:
                         friendly += 1
-
         return jumps
-
-
-
-
-
 
 
 class CheckerBoard:
@@ -423,6 +356,13 @@ class Checkers:
     def get_turn(self):
         return self._current_turn
 
+    def print_moves(self, position):
+        for pieces in self._tokens[self._current_turn]:
+            if pieces.get_position() == position:
+                moves = pieces.get_possible_moves(self._current_board)
+                print("Jumps possible: ", pieces.possible_jumps(moves, self._current_board))
+
+
     def remove_token(self, location, foe_color, my_color):
         removal_index = 0
         for index, value in enumerate(self._tokens[foe_color]):
@@ -431,9 +371,11 @@ class Checkers:
                 break
         self._tokens[foe_color].pop(removal_index)
         row,column = location
+        print("removed: ", location)
         self._current_board[row][column] = "OK"
         # update player's capture count
         self._player_objects[my_color].add_count("Capture")
+        print("Added to captured")
 
 
     def get_white_tokens(self):
@@ -537,11 +479,13 @@ class Checkers:
                     # test to make king once we have the selected piece
                     #tokens.change_type("TripleKing")
                     # test to see possible moves
+
+                    #print("Pre-Move___________________________________________________________________")
                     moves = tokens.get_possible_moves(self._current_board)
-                    print("Pre-Move___________________________________________________________________")
-                    print(tokens.get_possible_moves(self._current_board))
+
                     # test to translate moves visually
-                    print("possible jumps: ", tokens.possible_jumps(moves, self._current_board))
+                    #print("possible jumps: ", tokens.possible_jumps(moves, self._current_board))
+
                     print("Post-Move__________________________________________________________________")
                     captures = 0
                     if self._current_turn == "Black":
@@ -549,21 +493,39 @@ class Checkers:
                     elif self._current_turn == "White":
                         foe = "Black"
                     if tokens.get_type() == "Regular":
-                        for index in range(len(moves)):
-                            if moves[index] == destination_square_location:
-                                if index == 0:
-                                    # update to the new location (an effective move)
+                        for diagonal in moves:
+                            # find the relevant move list
+                            if destination_square_location not in diagonal:
+                                pass
+                            elif destination_square_location in diagonal:
+                                translated_list = []
+                                index = 0
+                                for square in range(len(diagonal)):
+                                    if diagonal[square] != destination_square_location:
+                                        continue
+                                    else:
+                                        index = square
+                                # found the destination, and it's not the first of the list, indicating capture
+                                if index > 0:
+                                #if diagonal[square] == destination_square_location and square > 0:
+                                    # since it needs to be adjacent and only 1 before
+                                    captured_piece = diagonal[index - 1]
                                     tokens.change_position(destination_square_location)
-                                    x,y = starting_square_location
-                                    self._current_board[x][y] = "OK"
-                                elif index != 0:
-                                    x,y = moves[index - 1]
-                                    if self._current_board[x][y] == foe:
-                                        captures += 1
+                                    # remove the capture piece from the board
+                                    self.remove_token(captured_piece, foe, self._current_turn)
+                                    # increase capture count
+                                    captures += 1
+
+                                # found destination, not a capture move
+                                elif index == 0:
+                                #elif diagonal[square] == destination_square_location and square == 0:
+                                    # change current position
                                     tokens.change_position(destination_square_location)
-                                    x,y = starting_square_location
-                                    self._current_board[x][y] = "OK"
-                                    self.remove_token(moves[index - 1], foe, self._current_turn)
+
+                                # update old position with empty space available
+                                x,y = starting_square_location
+                                self._current_board[x][y] = "OK"
+
                                 # now check if promotion
                                 if self._current_turn == "Black":
                                     if tokens.get_position()[0] == 0:
@@ -571,14 +533,26 @@ class Checkers:
                                 if self._current_turn == "White":
                                     if tokens.get_position()[0] == 7:
                                         tokens.change_type("King")
-                                # check if jumps are possible to change the turn
-                                print("post moves: ", tokens.get_possible_moves(self._current_board))
-                                print("possible jumps: ", tokens.possible_jumps(moves, self._current_board))
-                                print("current color: ", self._current_turn)
-                                if tokens.possible_jumps(moves, self._current_board) == 0:
-                                    self.change_turn()
+
                                 self.setup()
+
+                                # check if jumps are possible to change the turn
+                                #print("___post moves: ", tokens.get_possible_moves(self._current_board))
+                                #print("___possible jumps: ", tokens.possible_jumps(moves, self._current_board))
+                                #print("___current color: ", self._current_turn)
+
+                                # redefine moves for new position
+                                moves = tokens.get_possible_moves(self._current_board)
+
+                                # non capture move
+                                if captures == 0:
+                                    self.change_turn()
+                                else:
+                                    # capture move, but no jumps available
+                                    if tokens.possible_jumps(moves, self._current_board) == 0:
+                                        self.change_turn()
                                 return captures
+
 
 
 
@@ -671,13 +645,19 @@ Karolcia = game.create_player("Karolcia", "white")
 #game.test_adder("White", (4,5))
 #game.test_adder("White", (4,3))
 #game.test_color_change("White")
+
 game.play_game("Larry", (5,4), (4,5))
 game.play_game("Karolcia", (2,5), (3,4))
-game.play_game("Larry",(5,2),(4,3))
-game.play_game("Karolcia",(2,1),(3,0))
-game.play_game("Larry",(4,3),(2,5))
-print("current turn:", game.get_turn() ##### CAPTURES ARE OFF
-print("captured pieces: ", Larry.get_captured_pieces_count())
+game.play_game("Larry", (5,2),(4,1))
+game.play_game("Karolcia", (2,1),(3,0))
+game.play_game("Larry",(5,6), (4,7))
+game.play_game("Karolcia",(3,0),(5,2))
+game.play_game("Larry",(6,1),(4,3))
+print("BOTTOM-------------------------------------------------------------")
+#game.print_moves((4,3))
+print("current turn after move:", game.get_turn())
+print("captured pieces Larry: ", Larry.get_captured_pieces_count())
+print("captured pieces Karolcia: ", Karolcia.get_captured_pieces_count())
 for row in game._current_board:
     new_row = []
     for piece in row:
@@ -691,8 +671,9 @@ for row in game._current_board:
             new_row.append("X")
     print(new_row)
 
-
-#for color, token in game._tokens.items():
-#    print(color)
-#    for piece in token:
-#        print(piece.get_position())
+print("Larry counts: ")
+print("kings: ", Larry.get_king_count())
+print("Triple Kings: ", Larry.get_triple_king_count())
+print("Karolcia counts: ")
+print("kings: ", Karolcia.get_king_count())
+print("Triple Kings: ", Karolcia.get_triple_king_count())
