@@ -560,8 +560,6 @@ class Checkers:
                     # do a check if a king is white and at 0 or black and at 7 (promo to triple king)
 
             #### continue with moving and returning any pieces
-
-
     def get_checker_details(self, square_location):
         """takes a position on the board and returns the type of token currently on it or None if empty"""
         row, column = square_location
