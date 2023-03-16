@@ -1,10 +1,11 @@
 # LittleBigCheckers
 
-<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"></a>
-<a href="https://www.jetbrains.com/pycharm/"><img src="https://img.shields.io/badge/PyCharm-000000.svg?&style=for-the-badge&logo=PyCharm&logoColor=white"></a>
-<a href="https://www.linkedin.com/in/larryurrego/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-<a href="https://www.geeksforgeeks.org/print-colors-python-terminal/"><img src="https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" alt ="Python banner"></a>
+<a href="https://www.jetbrains.com/pycharm/"><img src="https://img.shields.io/badge/PyCharm-000000.svg?&style=for-the-badge&logo=PyCharm&logoColor=white" alt ="PyCharm banner"></a>
+<a href="https://www.linkedin.com/in/larryurrego/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt ="LinkedIn banner"></a>
+<a href="https://www.geeksforgeeks.org/print-colors-python-terminal/"><img src="https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white" alt ="GeeksforGeeks banner"></a>
 
+<a href="https://drive.google.com/uc?export=view&id=13DvDKOAvMt8Kff8EPEqOq5WtO-mbDM04"><img src="https://drive.google.com/uc?export=view&id=13DvDKOAvMt8Kff8EPEqOq5WtO-mbDM04" style="width: 500px; max-width: 100%; height: auto" title="Click for the larger version." /></a>
 
 
 LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. The project is organized 
@@ -23,7 +24,7 @@ I hope you enjoy this project as much as I did making it!
 - [Usage](#usage)
 - [Code Examples](#code-examples)
 - [Contributing](#contributing)
-- [License](#license)
+- [References](#license)
 - [Contact](#contact)
 
 ## Features
@@ -36,6 +37,9 @@ I hope you enjoy this project as much as I did making it!
   - The project consists of distinct classes for various game elements, such as Player, Checkers, Token, and CheckerBoard, allowing for easy modifications and enhancements to the game's logic and representation.
 - **Helpful Debugging Features** 
   - The Checkers class includes a print_moves() method that accepts a (row, column) position and displays the number of possible jumps for the piece at that position. This helps in understanding and debugging the game's logic.
+
+<a href="https://drive.google.com/uc?export=view&id=1RY32H59rPBWT6Kg_EMhP_tDVmaEtTawz"><img src="https://drive.google.com/uc?export=view&id=1RY32H59rPBWT6Kg_EMhP_tDVmaEtTawz" style="width: 500px; max-width: 100%; height: auto" title="Click for the larger version." /></a>
+
 
 # How to Use
 
@@ -92,6 +96,10 @@ Any contributions are greatly appreciated. Please follow these steps to contribu
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Create a new Pull Request.
 
-## License
+## References
 
-This project is licensed under the MIT License. See `LICENSE` for more information.
+<a href="https://www.geeksforgeeks.org/print-colors-python-terminal/" >GeeksforGeeks article on how to add color to Python projects</a>
+
+## Contact
+
+Feel free to reach out to me here or on LinkedIn!

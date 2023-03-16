@@ -1,7 +1,5 @@
 # Author: Larry Urrego
-# GitHub username: LaUrrego
-# Date: March 15, 2023
-# Description: Checkers simulator that uses rules based on provided Game_Rules.docx. Includes a Player and Checkers
+# Includes a Player and Checkers
 # class as well as a Token and CheckerBoard class used to represent changing token pieces and custom board arrangements,
 # respectively. Includes a special method for the Checkers class called print_color_board() that takes no arguments and
 # prints the current board as a stacked, numbered list of lists with colors utilizing ANSI escape sequences right in the
@@ -1021,8 +1019,6 @@ class Player:
         :return: Int
         """
         return self._capture_count
-
-
 
 
 
