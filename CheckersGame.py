@@ -824,11 +824,15 @@ class Checkers:
     def get_checker_details(self, square_location):
         """
         Takes a position on the board and returns the type of token currently on it or None if empty
+        Raises InvalidSquare exception if the location tuple is outside the bounds of the board.
 
         :param square_location: Tuple (row, column)
         :return: String or None
         """
         row, column = square_location
+        if row not in range(8) or column not in range(8):
+            raise InvalidSquare("Not a valid square location!")
+
         selected = self._current_board[row][column]
         if selected is None or selected == "OK":
             return None

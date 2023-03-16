@@ -221,6 +221,7 @@ class CheckersTest(unittest.TestCase):
         self.assertEqual(game.get_checker_details((7, 6)), "White_king")
         self.assertIsNone(game.get_checker_details((0, 0)))
         self.assertEqual(game.get_checker_details((4, 5)), "Black")
+        self.assertRaises(InvalidSquare, game.get_checker_details, (9, 9))
 
         self.assertEqual(player1.get_king_count(), 1)
 
