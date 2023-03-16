@@ -5,8 +5,8 @@
 <a href="https://www.linkedin.com/in/larryurrego/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt ="LinkedIn banner"></a>
 <a href="https://www.geeksforgeeks.org/print-colors-python-terminal/"><img src="https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white" alt ="GeeksforGeeks banner"></a>
 
-<img src="Images/Checkers_Terminal_Screen.png" alt ="Terminal output view" width: 500px>
 
+![Terminal output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Terminal_Screen.png)
 
 LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. The project is organized 
 using object-oriented programming principles into distinct classes for players, checkers, tokens, and the checkerboard.
@@ -38,7 +38,8 @@ I hope you enjoy this project as much as I did making it!
 - **Helpful Debugging Features** 
   - The Checkers class includes a print_moves() method that accepts a (row, column) position and displays the number of possible jumps for the piece at that position. This helps in understanding and debugging the game's logic.
 
-<img src="Images/Checkers_Console_Screen.png" alt ="PyCharm console output view" width: 500px>
+![PyCharm console output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Console_Screen.png)
+
 
 # How to Use
 
