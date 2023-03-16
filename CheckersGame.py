@@ -1,7 +1,21 @@
 # Author: Larry Urrego
 # GitHub username: LaUrrego
 # Date: March 15, 2023
-# Description: Checkers simulator...
+# Description: Checkers simulator that uses rules based on provided Game_Rules.docx. Includes a Player and Checkers
+# class as well as a Token and CheckerBoard class used to represent changing token pieces and custom board arrangements,
+# respectively. Includes a special method for the Checkers class called print_color_board() that takes no arguments and
+# prints the current board as a stacked, numbered list of lists with colors utilizing ANSI escape sequences right in the
+# terminal for ease of viewing a live display of the board when moving with play_game(). Simple call this method below
+# all play_game calls to have it print automatically.
+# Game utilizes custom game logic that determines all diagonal pieces of a particular current position (assuming it's
+# a valid square and token within play_game), and can indicate if jumps are possible for a given token using
+# logic specific for each token type: "Regular", "King", "TripleKing".
+# Game initialized with Black as first player per game rules. At any point, for any piece corresponding to a player of
+# the current turn, you can use the Checkers method print_moves() to input a (row, column) position and get how many,
+# if any, jumps are possible for that piece. Diagonal calculation logic has print-outs that were commented out for
+# cleanliness, but can be reimplemented to view a per-move, per-piece print out of moves on each diagonal. Moves are
+# displayed as an array of 4 arrays, corresponding to the 4 diagonal sides. Each first element in these arrays goes
+# from most adjacent square to edge-most square in that particular diagonal.
 
 class IncorrectColorPieceError(Exception):
     """Custom exception class used to validate player creation with piece color as string 'Black' or 'White'"""
@@ -24,6 +38,7 @@ class InvalidPlayer(Exception):
     """Custom exception class used to validate player. Raised when a player name is entered in play_game
     that is not one of two recorded players in the game"""
     pass
+
 
 class ColorsFg:
     """
@@ -446,6 +461,14 @@ class Checkers:
             self._tokens["Black"].append(item)
         self._current_board = board.get_board()
 
+    def get_board_dm(self):
+        """
+        Get method for testing getting the self._current_board data member for the Checkers class
+
+        :return: Array of arrays
+        """
+        return self._current_board
+
     def get_turn(self):
         """
         Get method to display color who's turn it currently is
@@ -653,11 +676,11 @@ class Checkers:
             for tokens in self._tokens[self._current_turn]:
                 if tokens.get_position() == starting_square_location:
 
-                    #print("Pre-Move___________________________________________________________________")
+                    #print("Pre-Move_______")
                     moves = tokens.get_possible_moves()
 
                     # test to translate moves visually
-                    #print("Post-Move__________________________________________________________________")
+                    #print("Post-Move______")
                     captures = 0
                     if self._current_turn == "Black":
                         foe = "White"
@@ -858,9 +881,9 @@ class Checkers:
             print(row_num, end=" ")
             row_num += 1
             for piece in range(8):
-                current = game._current_board[row][piece]
+                current = self._current_board[row][piece]
                 if current == "White":
-                    for token in game._tokens["White"]:
+                    for token in self._tokens["White"]:
                         if token.get_position() == (row, piece):
                             piece_type = token.get_type()
                             break
@@ -872,7 +895,7 @@ class Checkers:
                         display = "T"
                     print(ColorsBg.black, ColorsFg.lightgrey, display, ' \x1b[0m', end="")
                 elif current == "Black":
-                    for token in game._tokens["Black"]:
+                    for token in self._tokens["Black"]:
                         if token.get_position() == (row, piece):
                             piece_type = token.get_type()
                             break
@@ -918,13 +941,21 @@ class Player:
         self._triple_king_count = 0
         self._capture_count = 0
 
+    def get_name(self):
+        """
+        Get method to get the current Player object's name
+
+        :return: String
+        """
+        return self._player_name
+
     def add_count(self, count_type):
         """
         General method for adding count to a player's data member records.
         Utilizes the following identify strings:
         self._king_count - modified with 'King'
         self._triple_king_count - modified with 'TripleKing'
-        self._capture_count - modified with 'Capture"
+        self._capture_count - modified with 'Capture'
         otherwise raises an AttributeError for any other string entered
 
         :param count_type: String
@@ -989,125 +1020,9 @@ class Player:
 
 
 
-game = Checkers()
-Larry = game.create_player("Larry", "black")
-Karolcia = game.create_player("Karolcia", "white")
 
 
-game.play_game("Larry", (5,4), (4,5))
-game.play_game("Karolcia", (2,5), (3,4))
-game.play_game("Larry", (5,2),(4,1))
-game.play_game("Karolcia", (2,1),(3,0))
-game.play_game("Larry",(5,6), (4,7))
-game.play_game("Karolcia",(3,0),(5,2))
-game.play_game("Larry",(6,1),(4,3))
-game.play_game("Larry", (4,3), (2,5))
-game.play_game("Karolcia",(1,4), (3,6))
-game.play_game("Karolcia",(3,6),(5,4))
-game.play_game("Larry",(6,3),(4,5))
-game.play_game("Karolcia",(2,3),(3,2))
-game.play_game("Larry", (7,2),(6,3))
-game.play_game("Karolcia", (1,2), (2,3))
-game.play_game("Larry", (5,0),(4,1))
-game.play_game("Karolcia", (3,2),(5,0))
-game.play_game("Larry",(4,7),(3,6))
-#game.play_game("Karolcia",(5,0),(6,1))
-#game.play_game("Larry", (3,6),(2,5))
-#game.play_game("Karolcia", (6,1),(7,2))
-#game.play_game("Karolcia",(7,2),(5,4))
-#game.play_game("Karolcia",(5,4), (3,6))
-#game.play_game("Karolcia", (3,6),(1,4))
-#game.play_game("Larry", (6,7),(5,6))
-#game.play_game("Karolcia", (2,3), (3,2))
-#game.play_game("Larry", (6,5),(5,4))
-#game.play_game("Karolcia", (1,4), (2,3))
-#game.play_game("Larry", (7,0), (6,1))
-#game.play_game("Karolcia",(2,3),(6,7))
-#game.play_game("Larry",(5,4),(4,5))
-#game.play_game("Karolcia",(6,7),(1,2))
-#game.play_game("Larry",(6,1),(5,2))
-#game.play_game("Karolcia",(1,0),(2,1))
-#game.play_game("Larry",(5,2),(4,3))
-#game.play_game("Karolcia", (0,1),(1,0))
-#game.play_game("Larry",(4,3), (3,4))
-#game.play_game("Karolcia",(1,2),(0,1))
-#game.play_game("Larry",(3,4),(2,3))
-#game.play_game("Karolcia",(0,3),(1,2))
-#game.play_game("Larry",(7,6),(6,5))
-#game.play_game("Karolcia",(3,2),(4,1))
-#game.play_game("Larry",(2,3), (1,4))
-#game.play_game("Karolcia", (0,1),(3,4))
-#game.play_game("Larry",(1,4),(0,3))
-#game.play_game("Karolcia", (2,1),(3,0))
-#game.play_game("Larry",(0,3),(2,1))
-#game.play_game("Karolcia",(1,0),(3,2))
-#game.play_game("Larry",(6,5),(5,6))
-#game.play_game("Karolcia",(3,4),(6,7))
-#game.play_game("Larry", (7,4),(6,3))
-#game.play_game("Karolcia",(4,1),(5,2))
-#game.play_game("Larry",(6,3),(4,1))
-#game.play_game("Larry",(4,1),(2,3))
-#game.play_game("Karolcia",(6,7),(0,1))
-#print("BOTTOM-------------------------------------------------------------")
-#game.print_moves((0,3))
-#print("current turn after move:", game.get_turn())
-#print("captured pieces Larry: ", Larry.get_captured_pieces_count())
-#print("captured pieces Karolcia: ", Karolcia.get_captured_pieces_count())
-#for token in game._tokens["White"]:
-#    if token.get_position() == (7,2):
-#        print(token.get_type())
-game.print_color_board()
 
-#row_num = 0
-#print("    0    1    2    3    4    5    6    7")
-#for row in range(8):
-#    print(row_num, end=" ")
-#    row_num += 1
-#    for piece in range(8):
-#        current = game._current_board[row][piece]
-#        if current == "White":
-#            for token in game._tokens["White"]:
-#                if token.get_position() == (row,piece):
-#                    piece_type = token.get_type()
-#                    break
-#            if piece_type == "Regular":
-#                display = "W"
-#            elif piece_type == "King":
-#                display = "K"
-#            elif piece_type == "TripleKing":
-#                display = "T"
-#            print(ColorFile.bg.black, ColorFile.fg.lightgrey, display, ' \x1b[0m', end="")
-#        elif current == "Black":
-#            for token in game._tokens["Black"]:
-#                if token.get_position() == (row,piece):
-#                    piece_type = token.get_type()
-#                    break
-#            if piece_type == "Regular":
-#                display = "B"
-#            elif piece_type == "King":
-#                display = "K"
-#            elif piece_type == "TripleKing":
-#                display = "T"
-#            print(ColorFile.bg.black, ColorFile.fg.cyan, display, ' \x1b[0m', end="")
-#        elif current == "OK":
-#            print(ColorFile.bg.black, ColorFile.fg.lightgrey, " ", ' \x1b[0m', end="")
-#        elif current is None:
-#            print(ColorFile.bg.lightgrey, "  ", ' \x1b[0m', end="")
-#    print("")
-#print("    0    1    2    3    4    5    6    7")
 
-#if game.game_winner() == "Game has not ended":
-#    print("Game has not ended")
-#else:
-#    print("The winner is: ", game.game_winner())
 
-#print("Larry counts: ")
-#print("kings: ", Larry.get_king_count())
-#print("Triple Kings: ", Larry.get_triple_king_count())
-#print("Karolcia counts: ")
-#print("kings: ", Karolcia.get_king_count())
-#print("Triple Kings: ", Karolcia.get_triple_king_count())
-
-#for row in game.print_board():
-#    print(row)
 
