@@ -1,5 +1,12 @@
 # LittleBigCheckers
 
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"></a>
+<a href="https://www.jetbrains.com/pycharm/"><img src="https://img.shields.io/badge/PyCharm-000000.svg?&style=for-the-badge&logo=PyCharm&logoColor=white"></a>
+<a href="https://www.linkedin.com/in/larryurrego/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
+<a href="https://www.geeksforgeeks.org/print-colors-python-terminal/"><img src="https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white"></a>
+
+
+
 LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. The project is organized 
 using object-oriented programming principles into distinct classes for players, checkers, tokens, and the checkerboard.
 
@@ -21,10 +28,14 @@ I hope you enjoy this project as much as I did making it!
 
 ## Features
 
-- **Custom Game Logic:** The game logic is designed to handle all the nuances of the checkers game, such as regular pieces, kings, and triple kings. It accurately calculates all possible diagonal moves and jumps for each token type and determines the validity of a move based on the game's rules.
-- **Colorful Terminal Output:** The print_color_board() method in the Checkers class outputs the current game state as a stacked, numbered list of lists, using ANSI escape sequences to display colors in the terminal. This makes it easy to view the live display of the board during gameplay.
-- **Extensible Class Structure:** The project consists of distinct classes for various game elements, such as Player, Checkers, Token, and CheckerBoard, allowing for easy modifications and enhancements to the game's logic and representation.
-- **Helpful Debugging Features:** The Checkers class includes a print_moves() method that accepts a (row, column) position and displays the number of possible jumps for the piece at that position. This helps in understanding and debugging the game's logic.
+- **Custom Game Logic**  
+  - The game logic is designed to handle all the nuances of the checkers game, such as regular pieces, kings, and triple kings. It accurately calculates all possible diagonal moves and jumps for each token type and determines the validity of a move based on the game's rules.
+- **Colorful Terminal Output** 
+  - The print_color_board() method in the Checkers class outputs the current game state as a stacked, numbered list of lists, using ANSI escape sequences to display colors in the terminal. This makes it easy to view the live display of the board during gameplay.
+- **Extensible Class Structure** 
+  - The project consists of distinct classes for various game elements, such as Player, Checkers, Token, and CheckerBoard, allowing for easy modifications and enhancements to the game's logic and representation.
+- **Helpful Debugging Features** 
+  - The Checkers class includes a print_moves() method that accepts a (row, column) position and displays the number of possible jumps for the piece at that position. This helps in understanding and debugging the game's logic.
 
 # How to Use
 
