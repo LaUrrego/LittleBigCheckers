@@ -8,12 +8,17 @@
 
 ![Terminal output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Terminal_Screen.png)
 
-LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. The project is organized 
-using object-oriented programming principles into distinct classes for players, checkers, tokens, and the checkerboard.
+LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. It's turn and prompt based,
+determining all possible diagonals for a given token's current position on the board, and utilizing a custom algorithm to 
+evaluate possible moves. It prioritizes captures according to official <a href="https://www.wikihow.com/Play-Checkers">rules,</a> but move autonomy lies solely on the user.
+
+The project is organized using object-oriented programming principles into distinct classes for players, checkers, tokens, 
+and the checkerboard, and modularized move logic for ease of use throughout the code or for later customization.  
 
 Although I'm proud of the work I've done, this is very much still a work in progress I hope to develop over time to 
 become fully executable within terminal to include automated play calls, auto refresh after turns, and segmented move
-logic displays to aid players with making their next move. 
+logic displays to aid players with making their next move. I'm also looking into further development in the form of 
+an integrated CPU opponent with difficulty levels to make it easy to play or train.
 
 I hope you enjoy this project as much as I did making it! 
 
