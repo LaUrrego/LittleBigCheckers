@@ -1,10 +1,9 @@
 # Author: Larry Urrego
-# Includes a Player and Checkers
-# class as well as a Token and CheckerBoard class used to represent changing token pieces and custom board arrangements,
-# respectively. Includes a special method for the Checkers class called print_color_board() that takes no arguments and
-# prints the current board as a stacked, numbered list of lists with colors utilizing ANSI escape sequences right in the
-# terminal for ease of viewing a live display of the board when moving with play_game(). Simple call this method below
-# all play_game calls to have it print automatically.
+# Includes a Player and Checkers class as well as a Token and CheckerBoard class used to represent changing token pieces
+# and custom board arrangements, respectively. Includes a special method for the Checkers class called
+# print_color_board() that takes no arguments and prints the current board as a stacked, numbered list of lists with
+# colors utilizing ANSI escape sequences right in the terminal for ease of viewing a live display of the board when
+# moving with play_game(). Simple call this method below all play_game calls to have it print automatically.
 # Game utilizes custom game logic that determines all diagonal pieces of a particular current position (assuming it's
 # a valid square and token within play_game), and can indicate if jumps are possible for a given token using
 # logic specific for each token type: "Regular", "King", "TripleKing".
@@ -923,7 +922,7 @@ class Checkers:
         :return: String
         """
         black_count = len(self._tokens["Black"])
-        white_count = len(self._tokens["Black"])
+        white_count = len(self._tokens["White"])
 
         if black_count == 0:
             return self._players["White"]
@@ -1019,10 +1018,5 @@ class Player:
         :return: Int
         """
         return self._capture_count
-
-
-
-
-
 
 
