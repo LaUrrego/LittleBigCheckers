@@ -49,6 +49,7 @@ I hope you enjoy this project as much as I did making it!
 # How to Use
 
 Currently for Mac Terminal! Testing others as time allows.
+
 To use LittleBigCheckers, simply create an instance of Checkers, create two players using create_player(), and the call
 play_game() method to begin the game and use it to move your token pieces. You can also call the print_color_board() 
 method below all play_game() calls to automatically display the game board in the terminal after each move in full color 
@@ -56,10 +57,17 @@ and labeled rows/columns to help make move planning easier.
 For more insights into the game's logic, you can uncomment the print statements in the diagonal calculation logic to view 
 per-move, per-piece printouts of moves on each diagonal.
 
+When running the project in IDE: 
 ```Python
+# Initiate the game
 game = Checkers()
-game.play_game()
+# Create players
+game.create_player()
+# Print a color representation of the board
 game.print_color_board()
+# Main function to enter a move
+game.play_game()
+
 ```
 
 ## Installation
@@ -87,10 +95,10 @@ python --version
 1. Run the game using Python:
 
 ```bash
-python CheckersGame.py
+python3 CheckersGame.py
 ```
 
-2. Follow the on-screen instructions to play the game.
+2. Follow the on-screen instructions to play the game and have fun!
 
 ## Contributing 
 
