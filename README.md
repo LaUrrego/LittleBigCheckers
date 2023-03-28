@@ -48,6 +48,7 @@ I hope you enjoy this project as much as I did making it!
 
 # How to Use
 
+Currently for Mac Terminal! Testing others as time allows.
 To use LittleBigCheckers, simply create an instance of Checkers, create two players using create_player(), and the call
 play_game() method to begin the game and use it to move your token pieces. You can also call the print_color_board() 
 method below all play_game() calls to automatically display the game board in the terminal after each move in full color 
@@ -86,7 +87,7 @@ python --version
 1. Run the game using Python:
 
 ```bash
-python main.py
+python CheckersGame.py
 ```
 
 2. Follow the on-screen instructions to play the game.
