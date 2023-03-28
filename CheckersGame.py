@@ -14,6 +14,8 @@
 # displayed as an array of 4 arrays, corresponding to the 4 diagonal sides. Each first element in these arrays goes
 # from most adjacent square to edge-most square in that particular diagonal.
 
+import os
+
 class IncorrectColorPieceError(Exception):
     """Custom exception class used to validate player creation with piece color as string 'Black' or 'White'"""
     pass
@@ -931,6 +933,17 @@ class Checkers:
         else:
             return "Game has not ended"
 
+    def input_translate(self, move_string: str):
+        """
+        Translates a user-input move into a usable tuple form to play
+        :param move_string: String
+        :return: Tuple
+        """
+        num_only = move_string.strip("() ,")
+        row = int(num_only[0])
+        column = int(num_only[-1])
+        return row, column
+
 
 class Player:
     """Simulates a player in checkers, initialized with a player_name and checker_color. Includes methods to return
@@ -1020,3 +1033,45 @@ class Player:
         return self._capture_count
 
 
+if __name__ == "__main__":
+    # clear screen
+    os.system('clear')
+
+    game = Checkers()
+    player1_name = input("Enter a name for player 1: ")
+    player1_color = input("Enter your color (Black or White): ")
+    player2_name = input("Enter a name for player 2: ")
+    player2_color = input("Enter your color (Black or White, can not be same as player 1): ")
+    player1 = game.create_player(player1_name, player1_color)
+    player2 = game.create_player(player2_name, player2_color)
+
+    while game.game_winner() == "Game has not ended":
+        # clear screen
+        os.system('clear')
+
+        if game.get_turn() == player1.get_checker_color():
+            current_player = player1.get_name()
+        else:
+            current_player = player2.get_name()
+        print("=====================================")
+        print("Current player is: ", game.get_turn())
+        print("Player 1: ", player1_name, "|", player1_color)
+        print("Captured: ", player1.get_captured_pieces_count())
+        print("Player 2: ", player2_name, "|", player2_color)
+        print("Captured: ", player2.get_captured_pieces_count())
+        print("=====================================")
+
+        # display board
+        game.print_color_board()
+
+        check = input("What to check possible jumps? (y/n)")
+        if check.lower() == "y":
+            position = game.input_translate(input("Which piece should we check? (row, column): "))
+            game.print_moves(position)
+
+        start_move = game.input_translate(input("What is your next move?\n   Which piece to start? (row, column): "))
+        destination_move = game.input_translate(input("   Where are you moving it to? (row, column): "))
+        game.play_game(current_player, start_move, destination_move)
+
+
+    print(game.game_winner())
