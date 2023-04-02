@@ -6,7 +6,7 @@
 <a href="https://www.geeksforgeeks.org/print-colors-python-terminal/"><img src="https://img.shields.io/badge/GeeksforGeeks-298D46?style=for-the-badge&logo=geeksforgeeks&logoColor=white" alt ="GeeksforGeeks banner"></a>
 
 
-![Terminal output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Terminal_Screen.png)
+![Terminal gameplay view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/gameplay.png)
 
 LittleBigCheckers is my attempt at a custom checkers simulating game made entirely in Python. It's turn and prompt based,
 determining all possible diagonals for a given token's current position on the board, and utilizing a custom algorithm to 
@@ -42,6 +42,9 @@ I hope you enjoy this project as much as I did making it!
   - The project consists of distinct classes for various game elements, such as Player, Checkers, Token, and CheckerBoard, allowing for easy modifications and enhancements to the game's logic and representation.
 - **Helpful Debugging Features** 
   - The Checkers class includes a print_moves() method that accepts a (row, column) position and displays the number of possible jumps for the piece at that position. This helps in understanding and debugging the game's logic.
+
+![Terminal output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Terminal_Screen.png)
+
 
 ![PyCharm console output view](https://github.com/LaUrrego/LittleBigCheckers/blob/main/Images/Checkers_Console_Screen.png)
 
